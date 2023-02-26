@@ -18,7 +18,7 @@ db = SQLAlchemy(app)
 
 class CreatePostForm(FlaskForm):
     title = StringField("Task Title:", validators=[DataRequired()])
-    img_url = StringField("Task Image (URL):", validators=[DataRequired(), URL()])
+    img_url = StringField("Task Image (URL):")
     body = CKEditorField("Task Content:", validators=[DataRequired()])
     submit = SubmitField("Submit Task")
 
@@ -31,6 +31,9 @@ class User(db.Model):
     level = db.Column(db.Integer, unique=False, nullable=True)
     totalpoints = db.Column(db.Integer, unique=False, nullable=True)
     helped = db.Column(db.Integer, unique=False, nullable=True)
+    completed = db.Column(db.String(950), nullable=True)
+    tocomplete = db.Column(db.String(950), nullable=True)
+    ratings = db.Column(db.String(950), nullable=True)
 
 class BlogPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -51,6 +54,72 @@ class BlogPost(db.Model):
 with app.app_context():
     db.create_all()
 
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        new_user = User(username=request.form["username"],
+                        password=request.form["password"],
+                        email = request.form["email"],
+                        address = request.form["address"],
+                        level=1,
+                        totalpoints=0,
+                        helped=0,
+                        completed='',
+                        tocomplete='',
+                        ratings=''
+                                        )
+        db.session.add(new_user)
+        db.session.commit()
+
+        return redirect(url_for('login'))
+    return render_template("signup.html")
+
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        selected = request.form["username"]
+        myuser = User.query.filter_by(username=selected).first()
+
+        if myuser:
+            session['username'] = myuser.username
+            session['level'] = myuser.level
+            session['totalpoints'] = myuser.totalpoints
+            session['helped'] = myuser.helped
+
+            return redirect(url_for("index"))
+    return render_template("login.html")
+
+@app.route('/')
+def notuser():
+    return render_template("notuser.html")
+
+@app.route('/index')
+def index():
+    current = User.query.filter_by(username=session.get('username', None)).first()
+    d = {}
+    if current.tocomplete!='':
+        mylist = current.tocomplete.split('+')
+        for x in mylist:
+            if x!='':
+                post = BlogPost.query.filter_by(title=x).first()
+                d[x]=post.author
+
+    d2 = {}
+    if current.completed!='':
+        mylist = current.completed.split('+')
+        for x in mylist:
+            if x!='':
+                post = BlogPost.query.filter_by(title=x).first()
+                d2[x]=post.author
+
+    return render_template("index.html",
+                           user=current.username,
+                           level=current.level,
+                           totalpoints=current.totalpoints,
+                           completed = d2,
+                           tocomplete = d
+                           )
+
 @app.route("/delete/<int:post_id>")
 def delete_post(post_id):
     deleting = BlogPost.query.filter_by(id=post_id).first()
@@ -69,6 +138,7 @@ def volunteer(post_id):
     return redirect(url_for('blog'))
 
 
+
 @app.route("/unarchive/<int:post_id>")
 def unarchive(post_id):
     unarchive = BlogPost.query.filter_by(id=post_id).first()
@@ -76,53 +146,42 @@ def unarchive(post_id):
     db.session.commit()
     return redirect(url_for('myposts'))
 
-@app.route('/login', methods=["GET", "POST"])
-def login():
+@app.route('/rating/<name>/<title>', methods=["GET", "POST"])
+def rating(name,title):
     if request.method == "POST":
-        selected = request.form["username"]
-        myuser = User.query.filter_by(username=selected).first()
+        num = int(request.form.get("stars"))
+        helper = User.query.filter_by(username=name).first()
+        helper.ratings+=str(num)+' '
+        helper.totalpoints+=num*2
+        helper.helped+=1
 
-        if myuser:
-            session['username'] = myuser.username
-            session['level'] = myuser.level
-            session['totalpoints'] = myuser.totalpoints
-            session['helped'] = myuser.helped
+        post = BlogPost.query.filter_by(title=title).first()
+        mylist = post.accepted.split()
+        myindex = mylist.index(helper.username)
+        mylist.pop(myindex)
+        post.accepted = ' '.join(mylist)
 
-            return redirect(url_for("index"))
-    return render_template("login.html")
+        mylist = helper.tocomplete.split('+')
+        myindex = mylist.index(title)
+        popped = mylist.pop(myindex)
+        helper.tocomplete = '+'.join(mylist)
 
-@app.route("/signup", methods=["GET", "POST"])
-def signup():
-    if request.method == "POST":
-        new_user = User(username=request.form["username"],
-                        password=request.form["password"],
-                        email = request.form["email"],
-                        address = request.form["address"],
-                        level=1,
-                        totalpoints=0,
-                        helped=0
-                                        )
-        db.session.add(new_user)
+        helper.completed+=popped+'+'
+
         db.session.commit()
+        return redirect(url_for('myposts'))
+    return render_template("rating.html",name=name, title=title)
 
-        return redirect(url_for('login'))
-    return render_template("signup.html")
-
-@app.route('/')
-def notuser():
-    return render_template("notuser.html")
-
-@app.route('/index')
-def index():
-    current = User.query.filter_by(username=session.get('username', None)).first()
-    return render_template("index.html",
-                           user=current.username,
-                           level=current.level,
-                           totalpoints=current.totalpoints,
-                           )
+@app.route('/complete/<person>/<title>')
+def complete(person,title):
+    user = User.query.filter_by(username=person).first()
+    user.completed.append(title)
+    db.session.commit()
+    return redirect(url_for('index'))
 
 @app.route('/accepted/<title>/<person>')
 def accepted(title,person):
+    myuser = User.query.filter_by(username=person).first()
     post = BlogPost.query.filter_by(title=title).first()
     mylist = post.people.split()
     myindex = mylist.index(person)
@@ -130,17 +189,49 @@ def accepted(title,person):
     post.people = ' '.join(mylist)
     post.response-=1
     post.accepted += one+' '
+    myuser.tocomplete+=title+'+'
     db.session.commit()
     return redirect(url_for('myposts'))
+
+@app.route('/deny/<title>/<person>')
+def deny(title,person):
+    post = BlogPost.query.filter_by(title=title).first()
+    mylist = post.people.split()
+    myindex = mylist.index(person)
+    mylist.pop(myindex)
+    post.people = ' '.join(mylist)
+    post.response-=1
+    db.session.commit()
+    return redirect(url_for('myposts'))
+
 
 @app.route("/about")
 def about():
     current = User.query.filter_by(username=session.get('username', None)).first()
+    if current.totalpoints>=100:
+        current.level+=1
+        current.totalpoints-=100
+    avg=[]
+    for i in current.ratings.split():
+        avg.append(int(i))
+    average = round(sum(avg)/len(avg),1) if avg!=[] else 0
+    users = User.query.all()
+    details=[]
+    for x in users:
+        details.append([x.username,(x.level-1)*100+x.totalpoints])
+    details = sorted(details,key=lambda x:x[1])[::-1]
+    if len(details)>=3:
+        one,two,three = details[0],details[1],details[2]
     return render_template("about.html",
                            user=current.username,
                            level=current.level,
                            totalpoints=current.totalpoints,
-                           helped = current.helped
+                           helped = current.helped,
+                           average=average,
+                           one=one,
+                           two=two,
+                           three=three
+
                            )
 
 
@@ -158,15 +249,19 @@ def myposts():
     details = {}
     people_details = {}
     accept = {}
+    avg = []
     for x in posts:
         everyone = x.people.split()
         details[x.title] = everyone
         for selected in everyone:
             myuser = User.query.filter_by(username=selected).first()
             level,points = myuser.level,myuser.totalpoints
-            people_details[selected] = [level,points]
+            for i in myuser.ratings.split():
+                avg.append(int(i))
+            average = sum(avg)/len(avg) if avg!=[] else 0
+            people_details[selected] = [level,points,average]
+            
         accept[x.title]=x.accepted
-    print(accept)
     return render_template("myposts.html", all_posts=posts, now=current.username, details=details, everyone=people_details, clicked=accept)
 
 @app.route("/new-post", methods=["GET", "POST"])
@@ -177,7 +272,7 @@ def new_post():
         new_post = BlogPost(
             title=form.title.data,
             body=form.body.data,
-            img_url=form.img_url.data,
+            img_url=form.img_url.data if form.img_url.data else "https://media.istockphoto.com/id/1333345659/photo/dramatic-blue-shades-painted-canvas-and-muslin-cloth-studio-background-fitting-for-use-with.jpg?b=1&s=170667a&w=0&k=20&c=ubXKUHJr6vAM-YqHK1r0Vfu_E4_RDOFGKohrsX77dN4=",
             author=current.username,
             date=date.today().strftime("%B %d, %Y"),
             response = 0,
@@ -189,12 +284,6 @@ def new_post():
         db.session.commit()
         return redirect(url_for("blog"))
     return render_template("add.html", form=form)
-
-# @app.route("/helper/<name>")
-# def helper(name):
-#     person = User.query.filter_by(username=name).first()
-#     lev,points = person.level,person.totalpoints
-#     return (lev,points)
 
 
 if __name__ == "__main__":

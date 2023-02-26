@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>SocioPact - Available Neighborhood Tasks</title>
+    <title>SocioPact - Neighborhood Tasks</title>
     <!-- 
 
 Highway Template
@@ -56,9 +56,9 @@ https://templatemo.com/tm-520-highway
 
                         {% for post in all_posts %}
                         {% if post.archived==0 %}
-                        <div class="col-md-12">
+                        
                             <div class="blog-post">
-                                <img src="{{post.img_url}}" alt="">
+                                <img src="{{post.img_url}}" height="300" alt="">
                                 <div class="text-content">
                                     <span><a href="#">{{post.author}}</a> / <a href="#">{{post.date}}</a></span>
                                     <h2>{{post.title}}</h2>
@@ -68,10 +68,19 @@ https://templatemo.com/tm-520-highway
                                     {% endif %}
                                     <p>{{post.body|safe}}
                                     </p>
-                                    <div class="simple-btn">
-                                        <a class="responsebtn"
-                                            href="{{url_for('volunteer', post_id=post.id) }}">Volunteer</a>
-                                    </div>
+                                    {% if post.author != now %}
+                                        {% if now not in post.people and now not in post.accepted %}
+                                            <div class="simple-btn">
+                                                <a class="responsebtn" onclick="myfunction();"
+                                                    href="{{url_for('volunteer', post_id=post.id) }}">Volunteer</a>
+                                            </div>
+                                        {% endif %}
+                                        {% if now in post.people or now in post.accepted %}
+                                        <div class="simple-btn">
+                                            <p style="color:rgb(172, 149, 149);font-size:18px;">VOLUNTEERED</p>
+                                        </div>
+                                        {% endif %}
+                                    {% endif %}
                                 </div>
                             </div>
 
@@ -136,6 +145,11 @@ https://templatemo.com/tm-520-highway
 
     <script src="static/js/plugins.js"></script>
     <script src="static/js/main.js"></script>
+    <script>
+        function myfunction() {
+            window.alert('Succesfully volunteered');
+        }
+    </script>
 
 </body>
 

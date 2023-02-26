@@ -990,9 +990,16 @@ footer a:hover {
 }
 
 .blog-post img {
-  width: 100%;
+  width: 75%;
   overflow-y: hidden;
 }
+
+@media(max-width:700px) {
+  .blog-post img {
+      width:100%;
+  }
+  
+  }
 
 .blog-post .text-content {
   margin-top: 30px;

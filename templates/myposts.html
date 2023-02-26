@@ -24,52 +24,48 @@ https://templatemo.com/tm-520-highway
     <link rel="stylesheet" href="static/css/templatemo-style.css">
 
     <link href="https://fonts.googleapis.com/css?family=Kanit:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 
     <script src="static/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+    <!-- <style>
+        .tooltip {
+          position: relative;
+          display: inline-block;
+          border-bottom: 1px dotted black;
+        }
+        
+        .tooltip .tooltiptext {
+          visibility: hidden;
+          width: 120px;
+          background-color: black;
+          color: #fff;
+          text-align: center;
+          border-radius: 6px;
+          padding: 5px 0;
+          position: absolute;
+          z-index: 1;
+          bottom: 150%;
+          left: 50%;
+          margin-left: -60px;
+        }
+        
+        .tooltip .tooltiptext::after {
+          content: "";
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          margin-left: -5px;
+          border-width: 5px;
+          border-style: solid;
+          border-color: black transparent transparent transparent;
+        }
+        
+        .tooltip:hover .tooltiptext {
+          visibility: visible;
+        }
+    </style> -->
 
-    <style>
 
-        *{
-            margin: 0;
-            padding: 0;
-        }
-        .rate {
-            float: left;
-            height: 46px;
-            padding: 0 10px;
-        }
-        .rate:not(:checked) > input {
-            position:absolute;
-            top:-9999px;
-        }
-        .rate:not(:checked) > label {
-            float:right;
-            width:1em;
-            overflow:hidden;
-            white-space:nowrap;
-            cursor:pointer;
-            font-size:30px;
-            color:#ccc;
-        }
-        .rate:not(:checked) > label:before {
-            content: '★ ';
-        }
-        .rate > input:checked ~ label {
-            color: #ffc700;    
-        }
-        .rate:not(:checked) > label:hover,
-        .rate:not(:checked) > label:hover ~ label {
-            color: #deb217;  
-        }
-        .rate > input:checked + label:hover,
-        .rate > input:checked + label:hover ~ label,
-        .rate > input:checked ~ label:hover,
-        .rate > input:checked ~ label:hover ~ label,
-        .rate > label:hover ~ input:checked ~ label {
-            color: #c59b08;
-        }
-    
-    </style>
 
 </head>
 
@@ -105,25 +101,45 @@ https://templatemo.com/tm-520-highway
                         {% for post in all_posts %}
                         {% if post.author == now %}
                         {% if post.archived==0 %}
-                       
+
                         <div class="col-md-12">
                             <div class="blog-post">
 
                                 <div class="text-content">
                                     <h3 style="color:white">{{post.date}} - {{post.title}}</h3>
+                                    {% if post.response!=0 or post.accepted!='' %}
                                     <span>People offering help: </span>
                                     <br>
                                     <br>
+                                    {% endif %}
+                                    {% if post.response==0 and post.accepted=='' %}
+                                    <span style="color:gray">No responses yet</span>
+
+
+                                    {% endif %}
+
                                     <ol style="color:white; font-weight:300; list-style: none; padding-left: 0;">
                                         {% for x in range(post.response) %}
-                                        <li>{{details[post.title][x]}} - Level {{everyone[details[post.title][x]][0]}},
-                                            Points: {{everyone[details[post.title][x]][1]}} &nbsp; &nbsp; <a
-                                                style="color:#f4dd5b;" class="removing" onclick="myfunction();" href="{{url_for('accepted', title=post.title, person=details[post.title][x]
-                                                ) }}">Accept</a></li>
+                                        <li>
+                                        
+                                            {{details[post.title][x]}} - Level {{everyone[details[post.title][x]][0]}},
+                                            Points: {{everyone[details[post.title][x]][1]}}
+                                            &nbsp;&nbsp;
+                                            (Avg. Rating: {{everyone[details[post.title][x]][2]}})
+                                            
+                                            &nbsp; &nbsp; 
+                                            <a style="color:#f4dd5b; display: inline-block;" class="removing" onclick="myfunction();" href="{{url_for('accepted', title=post.title, person=details[post.title][x]) }}">Accept</a>
+                                            &nbsp; &nbsp; 
+                                            <a style="color:#cf381d; display: inline-block;" class="removing"  href="{{url_for('deny', title=post.title, person=details[post.title][x]) }}">Deny</a></li>
                                         {% endfor %}
+
+
                                         {% for x in clicked[post.title].split() %}
                                         <li>{{x}} - <span style="color:grey">Accepted</span>&nbsp; &nbsp; <a
-                                            style="color:#f4dd5b;" data-toggle="modal" data-target="#exampleModal">Done? Give Rating</a></li>
+                                                style="color:#f4dd5b;"
+                                                href="{{url_for('rating', name=x, title=post.title) }}">Done? Give
+                                                Rating</a></li>
+
                                         {% endfor %}
                                     </ol>
                                     <br>
@@ -177,38 +193,7 @@ https://templatemo.com/tm-520-highway
         </div>
     </footer>
 
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title" id="exampleModalLabel" style="color:white;">Give Rating</h4>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <br>
-            <br>
 
-            <div>
-                <div class="rate" style="text-align:center">
-                    <input type="radio" id="star5" name="rate" value="5" />
-                    <label for="star5" title="text">5 stars</label>
-                    <input type="radio" id="star4" name="rate" value="4" />
-                    <label for="star4" title="text">4 stars</label>
-                    <input type="radio" id="star3" name="rate" value="3" />
-                    <label for="star3" title="text">3 stars</label>
-                    <input type="radio" id="star2" name="rate" value="2" />
-                    <label for="star2" title="text">2 stars</label>
-                    <input type="radio" id="star1" name="rate" value="1" />
-                    <label for="star1" title="text">1 star</label>
-                </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Done</button>
-            </div>
-          </div>
-        </div>
-      </div>
 
 
 
@@ -251,13 +236,13 @@ https://templatemo.com/tm-520-highway
     <script src="static/js/main.js"></script>
     <script>
         function myfunction() {
-            window.alert('Successfully sent message.');
+            window.alert('Successfully accepted.');
         }
     </script>
     <script type="text/javascript">
         $(document).ready(function () {
             $('.removing').click(function () {
-                $(this).remove(); // remove element which is being clicked
+                $(this).remove();
             });
         });
     </script>

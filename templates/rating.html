@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Star Rating Form</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="static/css/fontAwesome.css">
+    <link rel="stylesheet" href="static/css/light-box.css">
+    <link rel="stylesheet" href="static/css/templatemo-style.css">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Kanit:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <style>
+        .rating {
+            display: inline-block;
+            position: relative;
+            height: 50px;
+            line-height: 50px;
+            font-size: 50px;
+        }
+
+        .rating label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .rating label:last-child {
+            position: static;
+        }
+
+        .rating label:nth-child(1) {
+            z-index: 5;
+        }
+
+        .rating label:nth-child(2) {
+            z-index: 4;
+        }
+
+        .rating label:nth-child(3) {
+            z-index: 3;
+        }
+
+        .rating label:nth-child(4) {
+            z-index: 2;
+        }
+
+        .rating label:nth-child(5) {
+            z-index: 1;
+        }
+
+        .rating label input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }
+
+        .rating label .icon {
+            float: left;
+            color: transparent;
+        }
+
+        .rating label:last-child .icon {
+            
+            color: #000;
+        }
+
+        .rating:not(:hover) label input:checked~.icon,
+        .rating:hover label:hover input~.icon {
+            color: #fd4;
+        }
+
+        .rating label input:focus:not(:checked)~.icon:last-child {
+            padding-left:15px;
+            padding-right:15px;
+            color: #000;
+            text-shadow: 0 0 5px #fd4;
+        }
+        .mycustom {
+            margin-top: 7rem;
+            padding-top:25px;
+            color:white;
+            font-family: Kanit;
+            font-weight:300;
+            font-size:22px;
+            text-align:center;
+            
+        }
+        .mydiv {
+          margin-left:22px;
+        }
+        .mybtn {
+            text-decoration: none;
+            padding:5px 50px;
+            font-family:Kanit;
+            margin-bottom:14rem;
+            margin-left:6rem;
+            margin-right:6rem;
+        }
+    </style>
+</head>
+
+<body style="background-color:#232323;display:flex;justify-content: center;">
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: flex;align-items: center; align-items:center" >
+        <div class="modal-dialog" role="document" style="background-color:rgb(88, 84, 84);">
+            <div class="modal-content" >
+                <div class="modal-header">
+                    <h4 class="modal-title mycustom" id="exampleModalLabel">How did {{name}} do?</h4>
+                 
+                </div>
+                <br>
+                <br>
+                <form method="post" class="rating mydiv" id="myform" action="{{url_for('rating',name=name,title=title) }}">
+                    <label>
+                        <input type="radio" name="stars" value="1" />
+                        <span class="icon fas fa-star"></span>
+                    </label>
+                    <label>
+                        <input type="radio" name="stars" value="2" />
+                        <span class="icon fas fa-star"></span>
+                        <span class="icon fas fa-star"></span>
+                    </label>
+                    <label>
+                        <input type="radio" name="stars" value="3" />
+                        <span class="icon fas fa-star"></span>
+                        <span class="icon fas fa-star"></span>
+                        <span class="icon fas fa-star"></span>
+                    </label>
+                    <label>
+                        <input type="radio" name="stars" value="4" />
+                        <span class="icon fas fa-star"></span>
+                        <span class="icon fas fa-star"></span>
+                        <span class="icon fas fa-star"></span>
+                        <span class="icon fas fa-star"></span>
+                    </label>
+                    <label>
+                        <input type="radio" name="stars" value="5" />
+                        <span class="icon fas fa-star"></span>
+                        <span class="icon fas fa-star"></span>
+                        <span class="icon fas fa-star"></span>
+                        <span class="icon fas fa-star"></span>
+                        <span class="icon fas fa-star"></span>
+                    </label>
+                    
+                </form>
+            </div>
+            <br>
+            <br>
+            <br>
+            <div>
+                <button type="submit" form="myform" class="mybtn">Done</button>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+</body>
+
+</html>
