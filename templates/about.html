@@ -50,7 +50,7 @@ https://templatemo.com/tm-520-highway
 
     .card {
         min-height: 295px;
-        width: 60%;
+        width: 100%;
         margin: auto;
         border-radius: 15px;
         background: #02383C;
@@ -215,7 +215,7 @@ https://templatemo.com/tm-520-highway
 
     <nav>
         <div class="logo">
-            <a href="/notuser">Socio<em>Pact</em></a>
+            <a href="/">Socio<em>Pact</em></a>
         </div>
         <div class="menu-icon">
             <span></span>
@@ -265,7 +265,7 @@ https://templatemo.com/tm-520-highway
               <h3 class="title">Current Leaderboard</h3>
               <div></div>
             </div>
-           
+           {% if leaderboard %}
             <div class="profile">
               <div class="person second">
                 <div class="num">2</div>
@@ -287,7 +287,7 @@ https://templatemo.com/tm-520-highway
                 <p class="points">{{three[1]}}</p>
               </div>
             </div>
-            
+            {% endif %}
           </div>
 
 </div>

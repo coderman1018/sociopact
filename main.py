@@ -220,6 +220,9 @@ def about():
     for x in users:
         details.append([x.username,(x.level-1)*100+x.totalpoints])
     details = sorted(details,key=lambda x:x[1])[::-1]
+    leaderboard=True
+    if len(details)<3:
+        leaderboard=False
     if len(details)>=3:
         one,two,three = details[0],details[1],details[2]
     return render_template("about.html",
@@ -230,7 +233,8 @@ def about():
                            average=average,
                            one=one,
                            two=two,
-                           three=three
+                           three=three,
+                           leaderboard=leaderboard
 
                            )
 
