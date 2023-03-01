@@ -5,14 +5,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
-    <title>SocioPact - My Posts</title>
-    <!-- 
+    <title>SocioPact - Created Tasks</title>
 
-Highway Template
-
-https://templatemo.com/tm-520-highway
-
--->
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -27,43 +21,72 @@ https://templatemo.com/tm-520-highway
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 
     <script src="static/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
-    <!-- <style>
-        .tooltip {
-          position: relative;
-          display: inline-block;
-          border-bottom: 1px dotted black;
+    <style>
+        * {
+            box-sizing: border-box
         }
-        
-        .tooltip .tooltiptext {
-          visibility: hidden;
-          width: 120px;
-          background-color: black;
-          color: #fff;
-          text-align: center;
-          border-radius: 6px;
-          padding: 5px 0;
-          position: absolute;
-          z-index: 1;
-          bottom: 150%;
-          left: 50%;
-          margin-left: -60px;
+
+        /* Set height of body and the document to 100% */
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            font-family: Kanit;
         }
-        
-        .tooltip .tooltiptext::after {
-          content: "";
-          position: absolute;
-          top: 100%;
-          left: 50%;
-          margin-left: -5px;
-          border-width: 5px;
-          border-style: solid;
-          border-color: black transparent transparent transparent;
+
+        /* Style tab links */
+        .tablink {
+            background-color: #555;
+            color: white;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            font-size: 17px;
+            width: 25%;
         }
-        
-        .tooltip:hover .tooltiptext {
-          visibility: visible;
+
+        .tablink:hover {
+            background-color: #777;
         }
-    </style> -->
+
+        /* Style the tab content (and add height:100% for full page content) */
+        .tabcontent {
+            color: white;
+            display: none;
+            padding: 100px 20px;
+            height: 100%;
+        }
+
+        .tabcontent {
+            animation: fadeEffect 1s;
+            /* Fading effect takes 1 second */
+        }
+
+        /* Go from zero to full opacity */
+        @keyframes fadeEffect {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        #active {
+            background-color: #232323;
+        }
+
+        #done {
+            background-color: #232323;
+        }
+
+        #archived {
+            background-color: #232323;
+        }
+    </style>
 
 
 
@@ -77,6 +100,9 @@ https://templatemo.com/tm-520-highway
         <div class="logo">
             <a href="/">Socio<em>Pact</em></a>
         </div>
+        <div>
+            <button onclick="window.location.href='/'" class="logo btn btn-lg btn-dark" style="color:black; float:right; margin-right:11rem; margin-top:1.75rem;">LOGOUT</button>
+        </div>
         <div class="menu-icon">
             <span></span>
         </div>
@@ -85,11 +111,14 @@ https://templatemo.com/tm-520-highway
     <div class="page-heading">
         <div class="container">
             <div class="heading-content">
-                <h1>My <em>Posts</em></h1>
+                <h1>Created <em>Tasks</em></h1>
             </div>
         </div>
     </div>
-    <br>
+
+    <button class="tablink" onclick="openPage('active', this, '#232323')" id="defaultOpen">Active Tasks</button>
+    <button class="tablink" onclick="openPage('done', this, '#232323')">Completed Tasks</button>
+    <button class="tablink" onclick="openPage('archived', this, '#232323')">Archived Tasks</button>
 
 
     <div class="blog-entries">
@@ -97,90 +126,123 @@ https://templatemo.com/tm-520-highway
             <div class="col-md-9">
                 <div class="blog-posts">
                     <div class="row">
+                        <div id="active" class="tabcontent">
+                            {% for post in all_posts %}
+                            {% if post.author == now %}
+                            {% if post.archived==0 %}
 
-                        {% for post in all_posts %}
-                        {% if post.author == now %}
-                        {% if post.archived==0 %}
+                            <div class="col-md-12">
+                                <div class="blog-post">
 
-                        <div class="col-md-12">
-                            <div class="blog-post">
-
-                                <div class="text-content">
-                                    <h3 style="color:white">{{post.date}} - {{post.title}}</h3>
-                                    {% if post.response!=0 or post.accepted!='' %}
-                                    <span>People offering help: </span>
-                                    <br>
-                                    <br>
-                                    {% endif %}
-                                    {% if post.response==0 and post.accepted=='' %}
-                                    <span style="color:gray">No responses yet</span>
-
-
-                                    {% endif %}
-
-                                    <ol style="color:white; font-weight:300; list-style: none; padding-left: 0;">
-                                        {% for x in range(post.response) %}
-                                        <li>
-                                        
-                                            {{details[post.title][x]}} - Level {{everyone[details[post.title][x]][0]}},
-                                            Points: {{everyone[details[post.title][x]][1]}}
-                                            &nbsp;&nbsp;
-                                            (Avg. Rating: {{everyone[details[post.title][x]][2]}})
-                                            
-                                            &nbsp; &nbsp; 
-                                            <a style="color:#f4dd5b; display: inline-block;" class="removing" onclick="myfunction();" href="{{url_for('accepted', title=post.title, person=details[post.title][x]) }}">Accept</a>
-                                            &nbsp; &nbsp; 
-                                            <a style="color:#cf381d; display: inline-block;" class="removing"  href="{{url_for('deny', title=post.title, person=details[post.title][x]) }}">Deny</a></li>
-                                        {% endfor %}
+                                    <div class="text-content">
+                                        <h3 style="color:white">{{post.date}} - {{post.title}}</h3>
+                                        {% if post.response!=0 or post.accepted!='' %}
+                                        <span>People offering help: </span>
+                                        <br>
+                                        <br>
+                                        {% endif %}
+                                        {% if post.response==0 and post.accepted=='' %}
+                                        <span style="color:gray">No responses yet</span>
 
 
-                                        {% for x in clicked[post.title].split() %}
-                                        <li>{{x}} - <span style="color:grey">Accepted</span>&nbsp; &nbsp; <a
-                                                style="color:#f4dd5b;"
-                                                href="{{url_for('rating', name=x, title=post.title) }}">Done? Give
-                                                Rating</a></li>
+                                        {% endif %}
 
-                                        {% endfor %}
-                                    </ol>
-                                    <br>
-                                    <br>
+                                        <ol style="color:white; font-weight:300; list-style: none; padding-left: 0;">
+                                            {% for x in range(post.response) %}
+                                            <li>
 
-                                    <a href="{{url_for('delete_post', post_id=post.id) }}">Archive Post</a>
+                                                {{details[post.title][x]}} - Level
+                                                {{everyone[details[post.title][x]][0]}},
+                                                Points: {{everyone[details[post.title][x]][1]}}
+                                                &nbsp;&nbsp;
+                                                (Avg. Rating: {{everyone[details[post.title][x]][2]}})
+
+                                                &nbsp; &nbsp;
+                                                <a style="color:#f4dd5b; display: inline-block;" class="removing"
+                                                    onclick="myfunction();"
+                                                    href="{{url_for('accepted', title=post.title, person=details[post.title][x]) }}">Accept</a>
+                                                &nbsp; &nbsp;
+                                                <a style="color:#cf381d; display: inline-block;" class="removing"
+                                                    href="{{url_for('deny', title=post.title, person=details[post.title][x]) }}">Deny</a>
+                                            </li>
+                                            {% endfor %}
+
+
+                                            {% for x in clicked[post.title].split() %}
+                                            <li>{{x}} - <span style="color:grey">Accepted</span>&nbsp; &nbsp; <a
+                                                    style="color:#f4dd5b;"
+                                                    href="{{url_for('rating', name=x, title=post.title) }}">Done? Give
+                                                    Rating</a></li>
+
+                                            {% endfor %}
+                                        </ol>
+                                        <br>
+                                        <br>
+
+                                        <a href="{{url_for('delete_post', post_id=post.id) }}">Archive Post</a>
+                                    </div>
                                 </div>
                             </div>
+                            {% endif %}
+                            {% endif %}
+                            {% endfor %}
                         </div>
-                        {% endif %}
-                        {% endif %}
-                        {% endfor %}
+                        <div id="archived" class="tabcontent">
+                            {% for post in all_posts %}
+                            {% if post.author == now %}
+                            {% if post.archived==1 %}
+                            {% if post.doneby=='' %}
+                            <div class="col-md-12">
+                                <div class="blog-post">
 
-                        {% for post in all_posts %}
-                        {% if post.author == now %}
-                        {% if post.archived==1 %}
-                        <div class="col-md-12">
-                            <div class="blog-post">
-
-                                <div class="text-content">
-                                    <h3 style="color:white">{{post.date}} - {{post.title}}</h3>
+                                    <div class="text-content">
+                                        <h3 style="color:white">{{post.date}} - {{post.title}}</h3>
 
 
 
-                                    <a href="{{url_for('unarchive', post_id=post.id) }}">Unarchive This Post</a>
-                                    <br>
+                                        <a href="{{url_for('unarchive', post_id=post.id) }}">Unarchive This Post</a>
+                                        <br>
 
 
 
+                                    </div>
                                 </div>
                             </div>
+                            {% endif %}
+
+
+                            {% endif %}
+                            {% endif %}
+                            {% endfor %}
                         </div>
-                        {% endif %}
-                        {% endif %}
-                        {% endfor %}
+                        <div id="done" class="tabcontent">
+                            {% for post in all_posts %}
+                            {% if post.author == now %}
+                            {% if post.archived==1 %}
+                            {% if post.doneby!='' %}
+                            <div class="col-md-12">
+                                <div class="blog-post">
+
+                                    <div class="text-content">
+                                        <h3 style="color:white">{{post.date}} - {{post.title}}</h3>
+                                        <p>Done by {{post.doneby}} on {{post.donebydate}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
 
 
+                            {% endif %}
+                            {% endif %}
+                            {% endfor %}
+
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>
+    </div>
     </div>
     </div>
 
@@ -207,20 +269,20 @@ https://templatemo.com/tm-520-highway
                             <a href="/index">Home</a>
                         </li>
                         <li>
-                            <a href="/about">My Stats</a>
+                            <a href="/about">Stats</a>
                         </li>
                         <li>
-                            <a href="/blog">Neighborhood Tasks</a>
+                            <a href="/tasks">Neighborhood Tasks</a>
                         </li>
                         <li>
-                            <a href="/blog">My Posts</a>
+                            <a href="/myposts">Created Tasks</a>
                         </li>
                         <hr>
                         <li>
                             <a href="/new-post">Create A Task</a>
                         </li>
                     </ul>
-                    <p>Everyone Deserves A Great Neighbor</p>
+
                 </div>
             </div>
         </div>
@@ -245,6 +307,24 @@ https://templatemo.com/tm-520-highway
                 $(this).remove();
             });
         });
+    </script>
+    <script>
+        function openPage(pageName, elmnt, color) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablink");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].style.backgroundColor = "";
+            }
+            document.getElementById(pageName).style.display = "block";
+            elmnt.style.backgroundColor = color;
+        }
+
+        // Get the element with id="defaultOpen" and click on it
+        document.getElementById("defaultOpen").click();
     </script>
 
 

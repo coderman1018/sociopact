@@ -5,13 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>SocioPact - Home</title>
-    <!-- 
 
-Highway Template
-
-https://templatemo.com/tm-520-highway
-
--->
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -33,6 +27,9 @@ https://templatemo.com/tm-520-highway
         <div class="logo">
             <a href="/">Socio<em>Pact</em></a>
         </div>
+        <div>
+            <button onclick="window.location.href='/'" class="logo btn btn-lg btn-dark" style="color:black; float:right; margin-right:11rem; margin-top:1.75rem;">LOGOUT</button>
+        </div>
         <div class="menu-icon">
             <span></span>
         </div>
@@ -43,8 +40,10 @@ https://templatemo.com/tm-520-highway
         <div class="video-content">
             <div class="inner"
                 style="background-image: url(https://media.istockphoto.com/id/502451497/photo/dark-blue-aluminum-background.jpg?b=1&s=170667a&w=0&k=20&c=9SxDAN3Sl5V7_n9GcakkfF54G3U67tPnk7VkLa160Wk=);background-size: cover;">
-                <h1>Welcome <em>{{user}}</em></h1>
-                <p>Start helping neighbors!</p>
+                <h1 style="margin-bottom:4rem;">Welcome <em>{{user}}</em></h1>
+             
+                <span><a href="/tasks" style="text-decoration:none;font-size:25px;">Start helping your neighborhood!</a></span>
+            
                 <div class="scroll-icon">
                     <a class="scrollTo" data-scrollTo="portfolio" href="#"><img src="static/img/scroll-icon.png"
                             alt=""></a>
@@ -61,14 +60,16 @@ https://templatemo.com/tm-520-highway
     <br>
     {% for x in tocomplete: %}
     <div class="alert" style="background-color:rgb(122, 117, 110); text-align: center; margin-left:20px; margin-right:20px;" role="alert">
-        <a style="text-decoration:none;color:black">{{x}} - {{tocomplete[x]}}</a>
+        <a style="text-decoration:none;color:black">{{x}} - {{tocomplete[x][0]}}</a>
+        <br>
+        <a style="text-decoration:none;color:black">To know more about this task, email: <a style="color:white;text-decoration: underline;" href="mailto:{{tocomplete[x][0]}}?Subject={{x}}">{{tocomplete[x][1]}}</a></a>
     </div>
   
     {% endfor %}
     {% endif %}
 
     {% if completed!={} %}
-    <h3 style="color:white;margin:0;text-align:center; margin-top: 3.5rem;">Tasks I've Completed</h3>
+    <h3 style="color:white;margin:0;text-align:center; margin-top: 3.5rem;">Completed Tasks</h3>
     <br>
     <br>
     {% for x in completed: %}
@@ -79,8 +80,32 @@ https://templatemo.com/tm-520-highway
     {% endfor %}
     {% endif %}
 
-    {% if tocomplete=={} and completed=={} %}
-    <h4 style="color:white;margin:20px;text-align:center; margin-top: 3.5rem;"><i>Tasks you complete and volunteer for will show up here. Help people to earn points and level up!</i></h4>
+    {% if volunteeredfor!={} %}
+    <h3 style="color:white;margin:0;text-align:center; margin-top: 3.5rem;">Tasks Volunteered For</h3>
+    <br>
+    <br>
+    {% for x in volunteeredfor: %}
+    <div class="alert" style="background-color:rgb(128, 163, 131); text-align: center; margin-left:20px; margin-right:20px;" role="alert">
+        <a style="text-decoration:none;color:rgb(0, 0, 0)">{{x}} - {{volunteeredfor[x][0]}}</a>
+        <br>
+        {% if volunteeredfor[x][1]==1 and volunteeredfor[x][2]!='' %}
+        <a style="text-decoration:none;color:rgb(0, 0, 0)">Task Status: Finished</a>
+        {% endif %}
+        {% if volunteeredfor[x][1]==1 and volunteeredfor[x][2]=='' %}
+        <a style="text-decoration:none;color:rgb(0, 0, 0)">Task Status: Archived</a>
+        {% endif %}
+        {% if volunteeredfor[x][2]=='' and volunteeredfor[x][1]==0 %}
+        <a style="text-decoration:none;color:rgb(0, 0, 0)">Task Status: Active</a>
+        {% endif %}
+    </div>
+  
+    {% endfor %}
+    {% endif %}
+
+    {% if tocomplete=={} and completed=={} and volunteeredfor=={} %}
+    <br>
+    <br>
+    <h4 style="color:rgb(150, 140, 140);text-align:center; margin-top: 3.5rem;"><i>Tasks you complete and volunteer for will show up here. Help people to earn points and level up!</i></h4>
     {% endif %}
 
 </div>
@@ -112,20 +137,20 @@ https://templatemo.com/tm-520-highway
                             <a href="/index">Home</a>
                         </li>
                         <li>
-                            <a href="/about">My Stats</a>
+                            <a href="/about">Stats</a>
                         </li>
                         <li>
-                            <a href="/blog">Neighborhood Tasks</a>
+                            <a href="/tasks">Neighborhood Tasks</a>
                         </li>
                         <li>
-                            <a href="/myposts">My Posts</a>
+                            <a href="/myposts">Created Tasks</a>
                         </li>
                         <hr>
                         <li>
                             <a href="/new-post">Create A Task</a>
                         </li>
                     </ul>
-                    <p>Everyone Deserves A Great Neighbor</p>
+                    
                 </div>
             </div>
         </div>

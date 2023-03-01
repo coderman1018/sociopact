@@ -5,13 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>SocioPact - Neighborhood Tasks</title>
-    <!-- 
-
-Highway Template
-
-https://templatemo.com/tm-520-highway
-
--->
+    
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -33,6 +27,9 @@ https://templatemo.com/tm-520-highway
     <nav>
         <div class="logo">
             <a href="/">Socio<em>Pact</em></a>
+        </div>
+        <div>
+            <button onclick="window.location.href='/'" class="logo btn btn-lg btn-dark" style="color:black; float:right; margin-right:11rem; margin-top:1.75rem;">LOGOUT</button>
         </div>
         <div class="menu-icon">
             <span></span>
@@ -58,7 +55,6 @@ https://templatemo.com/tm-520-highway
                         {% if post.archived==0 %}
                         
                             <div class="blog-post">
-                                <img src="{{post.img_url}}" height="300" alt="">
                                 <div class="text-content">
                                     <span><a href="#">{{post.author}}</a> / <a href="#">{{post.date}}</a></span>
                                     <h2>{{post.title}}</h2>
@@ -119,20 +115,20 @@ https://templatemo.com/tm-520-highway
                             <a href="/index">Home</a>
                         </li>
                         <li>
-                            <a href="/about">My Stats</a>
+                            <a href="/about">Stats</a>
                         </li>
                         <li>
-                            <a href="/blog">Neighborhood Tasks</a>
+                            <a href="/tasks">Neighborhood Tasks</a>
                         </li>
                         <li>
-                            <a href="/myposts">My Posts</a>
+                            <a href="/myposts">Created Tasks</a>
                         </li>
                         <hr>
                         <li>
                             <a href="/new-post">Create A Task</a>
                         </li>
                     </ul>
-                    <p>Everyone Deserves A Great Neighbor</p>
+                    
                 </div>
             </div>
         </div>

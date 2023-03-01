@@ -18,7 +18,6 @@ db = SQLAlchemy(app)
 
 class CreatePostForm(FlaskForm):
     title = StringField("Task Title:", validators=[DataRequired()])
-    img_url = StringField("Task Image (URL):")
     body = CKEditorField("Task Content:", validators=[DataRequired()])
     submit = SubmitField("Submit Task")
 
@@ -34,6 +33,7 @@ class User(db.Model):
     completed = db.Column(db.String(950), nullable=True)
     tocomplete = db.Column(db.String(950), nullable=True)
     ratings = db.Column(db.String(950), nullable=True)
+    volunteered = db.Column(db.String(950), nullable=True)
 
 class BlogPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -41,11 +41,12 @@ class BlogPost(db.Model):
     date = db.Column(db.String(250), nullable=False)
     body = db.Column(db.Text, nullable=False)
     author = db.Column(db.String(250), nullable=False)
-    img_url = db.Column(db.String(950), nullable=False)
     response = db.Column(db.Integer, unique=False, nullable=True)
     archived = db.Column(db.Integer, unique=False, nullable=True)
     people = db.Column(db.String(950), nullable=False)
     accepted = db.Column(db.String(950), nullable=False)
+    doneby = db.Column(db.String(950), nullable=False)
+    donebydate = db.Column(db.String(250), nullable=True)
 
 
 
@@ -66,7 +67,8 @@ def signup():
                         helped=0,
                         completed='',
                         tocomplete='',
-                        ratings=''
+                        ratings='',
+                        volunteered=''
                                         )
         db.session.add(new_user)
         db.session.commit()
@@ -102,7 +104,8 @@ def index():
         for x in mylist:
             if x!='':
                 post = BlogPost.query.filter_by(title=x).first()
-                d[x]=post.author
+                d[x] = [post.author,User.query.filter_by(username=post.author).first().email]
+                
 
     d2 = {}
     if current.completed!='':
@@ -111,13 +114,21 @@ def index():
             if x!='':
                 post = BlogPost.query.filter_by(title=x).first()
                 d2[x]=post.author
+    d3 = {}
+    if current.volunteered!='':
+        mylist = current.volunteered.split('+')
+        for x in mylist:
+            if x!='':
+                post = BlogPost.query.filter_by(title=x).first()
+                d3[x]=[post.author,post.archived,post.doneby]
 
     return render_template("index.html",
                            user=current.username,
                            level=current.level,
                            totalpoints=current.totalpoints,
                            completed = d2,
-                           tocomplete = d
+                           tocomplete = d,
+                           volunteeredfor = d3
                            )
 
 @app.route("/delete/<int:post_id>")
@@ -131,11 +142,12 @@ def delete_post(post_id):
 def volunteer(post_id):
     volunteering = BlogPost.query.filter_by(id=post_id).first()
     person = User.query.filter_by(username=session.get('username', None)).first()
+    person.volunteered+=volunteering.title+'+'
     if person.username not in volunteering.people:
         volunteering.response+=1
         volunteering.people+=person.username+' '
         db.session.commit()
-    return redirect(url_for('blog'))
+    return redirect(url_for('tasks'))
 
 
 
@@ -156,6 +168,9 @@ def rating(name,title):
         helper.helped+=1
 
         post = BlogPost.query.filter_by(title=title).first()
+        post.doneby=helper.username
+        post.archived=1
+        post.donebydate = date.today().strftime("%B %d, %Y")
         mylist = post.accepted.split()
         myindex = mylist.index(helper.username)
         mylist.pop(myindex)
@@ -222,6 +237,7 @@ def about():
     details = sorted(details,key=lambda x:x[1])[::-1]
     leaderboard=True
     if len(details)<3:
+        one,two,three = 0,0,0
         leaderboard=False
     if len(details)>=3:
         one,two,three = details[0],details[1],details[2]
@@ -239,11 +255,11 @@ def about():
                            )
 
 
-@app.route("/blog")
-def blog():
+@app.route("/tasks")
+def tasks():
     posts = BlogPost.query.all()
     current = User.query.filter_by(username=session.get('username', None)).first()
-    return render_template("blog.html", all_posts=posts, now=current.username)
+    return render_template("blog.html", all_posts=posts[::-1], now=current.username)
 
 
 @app.route("/myposts")
@@ -262,7 +278,7 @@ def myposts():
             level,points = myuser.level,myuser.totalpoints
             for i in myuser.ratings.split():
                 avg.append(int(i))
-            average = sum(avg)/len(avg) if avg!=[] else 0
+            average = round(sum(avg)/len(avg),1) if avg!=[] else 0
             people_details[selected] = [level,points,average]
             
         accept[x.title]=x.accepted
@@ -276,17 +292,18 @@ def new_post():
         new_post = BlogPost(
             title=form.title.data,
             body=form.body.data,
-            img_url=form.img_url.data if form.img_url.data else "https://media.istockphoto.com/id/1333345659/photo/dramatic-blue-shades-painted-canvas-and-muslin-cloth-studio-background-fitting-for-use-with.jpg?b=1&s=170667a&w=0&k=20&c=ubXKUHJr6vAM-YqHK1r0Vfu_E4_RDOFGKohrsX77dN4=",
             author=current.username,
             date=date.today().strftime("%B %d, %Y"),
             response = 0,
             archived = 0,
             people = '',
-            accepted = ''
+            accepted = '',
+            doneby='',
+            donebydate = ''
         )
         db.session.add(new_post)
         db.session.commit()
-        return redirect(url_for("blog"))
+        return redirect(url_for("tasks"))
     return render_template("add.html", form=form)
 
 

@@ -1,29 +1,126 @@
-{% extends 'bootstrap/base.html' %}
+
 {% import "bootstrap/wtf.html" as wtf %}
 {% block content %}
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
-</style> 
+<!DOCTYPE html>
+<html>
 
-<body style="background-color:lavender">
-    <br>
-    <br>
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-8 col-md-10 mx-auto" style="margin-bottom:60px">
-        <h2 style="font-family: Nunito;">Ask For Help</h2>
-        <br>
-        <br>
-        {{ ckeditor.load() }}
-        
-        
-        {{ ckeditor.config(name='body') }}
-        
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>SocioPact - Create A Task</title>
 
-        {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
-      </div>
+    <link rel="stylesheet" href="static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="static/css/fontAwesome.css">
+    <link rel="stylesheet" href="static/css/light-box.css">
+    <link rel="stylesheet" href="static/css/templatemo-style.css">
+
+    <link href="https://fonts.googleapis.com/css?family=Rubik:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Kanit:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <script src="static/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+
+</head>
+
+<body style="background-color: #555353; color:rgb(0, 0, 0);">
+
+    <nav>
+        <div class="logo">
+            <a href="/">Socio<em>Pact</em></a>
+        </div>
+        <div>
+            <button onclick="window.location.href='/'" class="logo btn btn-lg btn-dark" style="color:black; float:right; margin-right:11rem; margin-top:1.75rem;">LOGOUT</button>
+        </div>
+        <div class="menu-icon">
+            <span></span>
+        </div>
+    </nav>
+
+    <div class="page-heading">
+        <div class="container">
+            <div class="heading-content">
+                <h1>Create A <em>Task</em></h1>
+            </div>
+        </div>
     </div>
-  </div>
+
+
+    <div class="container" style="font-family:'Rubik';font-weight:100">
+        <div class="row">
+          <div class="col-lg-12 col-md-10 mx-auto" style="margin-bottom:60px">
+            <br>
+            <br>
+            {{ ckeditor.load() }}
+            
+            
+            {{ ckeditor.config(name='body') }}
+            
+    
+            {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "secondary"}) }}
+    
+          </div>
+        </div>
+      </div>
+
+
+    <footer>
+        <div class="container-fluid">
+            <div class="col-md-12">
+                <p>Copyright &copy; 2023 SocioPact</p>
+            </div>
+        </div>
+    </footer>
+
+
+
+
+
+
+    <section class="overlay-menu">
+        <div class="container">
+            <div class="row">
+                <div class="main-menu">
+                    <ul>
+                        <li>
+                            <a href="/index">Home</a>
+                        </li>
+                        <li>
+                            <a href="/about">Stats</a>
+                        </li>
+                        <li>
+                            <a href="/tasks">Neighborhood Tasks</a>
+                        </li>
+                        <li>
+                            <a href="/myposts">Created Tasks</a>
+                        </li>
+                        <hr>
+                        <li>
+                            <a href="/new-post">Create A Task</a>
+                        </li>
+                    </ul>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="static/js/vendor/jquery-1.11.2.min.js"><\/script>')</script>
+
+    <script src="static/js/vendor/bootstrap.min.js"></script>
+
+    <script src="static/js/plugins.js"></script>
+    <script src="static/js/main.js"></script>
+    <script>
+        function myfunction() {
+            window.alert('Succesfully volunteered');
+        }
+    </script>
+
 </body>
+
+</html>
 {% endblock %}
