@@ -104,7 +104,7 @@ def index():
         for x in mylist:
             if x!='':
                 post = BlogPost.query.filter_by(title=x).first()
-                d[x] = [post.author,User.query.filter_by(username=post.author).first().email]
+                d[x] = [post.author,User.query.filter_by(username=post.author).first().email,post.id]
                 
 
     d2 = {}
@@ -120,7 +120,7 @@ def index():
         for x in mylist:
             if x!='':
                 post = BlogPost.query.filter_by(title=x).first()
-                d3[x]=[post.author,post.archived,post.doneby]
+                d3[x]=[post.author,post.archived,post.doneby,post.id]
 
     return render_template("index.html",
                            user=current.username,
@@ -306,6 +306,25 @@ def new_post():
         return redirect(url_for("tasks"))
     return render_template("add.html", form=form)
 
+@app.route("/edit-post/<int:post_id>", methods=["GET", "POST"])
+def edit_post(post_id):
+    post = BlogPost.query.get(post_id)
+    edit_form = CreatePostForm(
+        title=post.title,
+        body=post.body
+    )
+    if edit_form.validate_on_submit():
+        post.title = edit_form.title.data
+        post.body = edit_form.body.data    
+        db.session.commit()
+        return redirect(url_for("myposts"))
+    return render_template("add.html", form=edit_form, is_edit=True)
+
+@app.route("/onepost/<int:post_id>/<ishome>")
+def onepost(post_id,ishome):
+    print(ishome)
+    post = BlogPost.query.get(post_id)
+    return render_template("onepost.html",post=post,ishome=ishome)
 
 if __name__ == "__main__":
     app.run(debug=True)

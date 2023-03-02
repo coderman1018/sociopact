@@ -1,16 +1,10 @@
-{% import "bootstrap/wtf.html" as wtf %}
-{% block content %}
 <!DOCTYPE html>
 <html>
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    {% if is_edit: %}
-    <title>SocioPact - Edit Task</title>
-    {% else: %}
-    <title>SocioPact - Create A Task</title>
-    {% endif %}
+    <title>SocioPact - Neighborhood Tasks</title>
 
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,60 +16,55 @@
     <link rel="stylesheet" href="static/css/light-box.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-style.css') }}">
 
-
-    <link href="https://fonts.googleapis.com/css?family=Rubik:100,200,300,400,500,600,700,800,900" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Kanit:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+
     <script src="static/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
 
 </head>
 
-<body style="background-color: #555353; color:rgb(0, 0, 0);">
+<body style="background-color: #232323;">
 
-    <nav>
-        <div class="logo">
-            <a href="/">Socio<em>Pact</em></a>
-        </div>
-        <div>
-            <button onclick="window.location.href='/'" class="logo btn btn-lg btn-dark"
-                style="color:black; float:right; margin-right:11rem; margin-top:1.75rem;">LOGOUT</button>
-        </div>
-        <div class="menu-icon">
-            <span></span>
-        </div>
-    </nav>
+   
 
-    <div class="page-heading">
+
+    <div class="blog-entries">
         <div class="container">
-            {% if is_edit: %}
-            <div class="heading-content">
-                <h1>Edit Your <em>Task</em></h1>
-            </div>
-            {% else: %}
-            <div class="heading-content">
-                <h1>Create A <em>Task</em></h1>
-            </div>
-            {% endif %}
+            <div class="col-md-9">
+                <div class="blog-posts">
+                    <div class="row">
+                        {% if ishome=='True' %}
+                        <button onclick="window.location.href='/index#portfolio'" class="btn btn-primary btn-md">← Back</button>
+                        {% endif %}
+                        {% if ishome=='False' %}
+                        <button onclick="window.location.href='/myposts'" class="btn btn-primary btn-md">← Back</button>
+                        {%endif%}
+                        <div class="blog-post">
+                            <div class="text-content">
+                                <span><a href="#">{{post.author}}</a> / <a href="#">{{post.date}}</a></span>
+                                <h2>{{post.title}}</h2>
 
+
+                                <p>{{post.body|safe}}
+                                </p>
+
+                            </div>
+                        </div>
+
+
+
+
+
+                    </div>
+                    
+                </div>
+                
+                
+            </div>
         </div>
+        
     </div>
-
-
-    <div class="container" style="font-family:'Rubik';font-weight:100">
-        <div class="row">
-            <div class="col-lg-12 col-md-10 mx-auto" style="margin-bottom:60px">
-                <br>
-                <br>
-                {{ ckeditor.load() }}
-
-
-                {{ ckeditor.config(name='body') }}
-
-
-                {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "secondary"}) }}
-
-            </div>
-        </div>
     </div>
+    
 
 
     <footer>
@@ -135,4 +124,3 @@
 </body>
 
 </html>
-{% endblock %}

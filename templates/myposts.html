@@ -135,7 +135,7 @@
                                 <div class="blog-post">
 
                                     <div class="text-content">
-                                        <h3 style="color:white">{{post.date}} - {{post.title}}</h3>
+                                        <h3 style="color:white"><a style="color:white" href="{{url_for('onepost', post_id=post.id,ishome=False)}}">{{post.date}} - {{post.title}}</a></h3>
                                         {% if post.response!=0 or post.accepted!='' %}
                                         <span>People offering help: </span>
                                         <br>
@@ -178,7 +178,8 @@
                                         </ol>
                                         <br>
                                         <br>
-
+                                        <a href="{{url_for('edit_post', post_id=post.id)}}">Edit Post</a>
+                                        <br>
                                         <a href="{{url_for('delete_post', post_id=post.id) }}">Archive Post</a>
                                     </div>
                                 </div>
