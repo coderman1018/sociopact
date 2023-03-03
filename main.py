@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
@@ -6,6 +6,7 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired, URL
 from flask_ckeditor import CKEditor, CKEditorField
 from datetime import date
+import win32api
 
 app = Flask(__name__)
 app.secret_key = "sociopact-123"
@@ -23,9 +24,9 @@ class CreatePostForm(FlaskForm):
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(250), unique=True, nullable=False)
+    username = db.Column(db.String(250), unique=False, nullable=False)
     password = db.Column(db.String(250), unique=False, nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(100), unique=False, nullable=False)
     address = db.Column(db.String(100), unique=False, nullable=False) 
     level = db.Column(db.Integer, unique=False, nullable=True)
     totalpoints = db.Column(db.Integer, unique=False, nullable=True)
@@ -41,12 +42,14 @@ class BlogPost(db.Model):
     date = db.Column(db.String(250), nullable=False)
     body = db.Column(db.Text, nullable=False)
     author = db.Column(db.String(250), nullable=False)
+    address = db.Column(db.String(250), nullable=False)
     response = db.Column(db.Integer, unique=False, nullable=True)
     archived = db.Column(db.Integer, unique=False, nullable=True)
     people = db.Column(db.String(950), nullable=False)
     accepted = db.Column(db.String(950), nullable=False)
     doneby = db.Column(db.String(950), nullable=False)
     donebydate = db.Column(db.String(250), nullable=True)
+    
 
 
 
@@ -58,31 +61,40 @@ with app.app_context():
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        new_user = User(username=request.form["username"],
-                        password=request.form["password"],
-                        email = request.form["email"],
-                        address = request.form["address"],
-                        level=1,
-                        totalpoints=0,
-                        helped=0,
-                        completed='',
-                        tocomplete='',
-                        ratings='',
-                        volunteered=''
-                                        )
-        db.session.add(new_user)
-        db.session.commit()
+        email = request.form["email"]
+        dup = False
+        for x in User.query.all():
+            if x.email==email: 
+                dup = True
+        if not dup:
+            new_user = User(username=request.form["username"],
+                            password=request.form["password"],
+                            email = request.form["email"],
+                            address = request.form["neighborhoods"],
+                            level=1,
+                            totalpoints=0,
+                            helped=0,
+                            completed='',
+                            tocomplete='',
+                            ratings='',
+                            volunteered=''
+                                            )
+            db.session.add(new_user)
+            db.session.commit()
 
-        return redirect(url_for('login'))
+            return redirect(url_for('login'))
+        else:
+            win32api.MessageBox(0, 'You have already signed up with this email. Try logging in instead', 'Duplicate Email',4096)
     return render_template("signup.html")
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         selected = request.form["username"]
-        myuser = User.query.filter_by(username=selected).first()
+        userpass = request.form["password"]
+        myuser = User.query.filter_by(email=selected).first()
 
-        if myuser:
+        if myuser and myuser.password==userpass:
             session['username'] = myuser.username
             session['level'] = myuser.level
             session['totalpoints'] = myuser.totalpoints
@@ -230,7 +242,7 @@ def about():
     for i in current.ratings.split():
         avg.append(int(i))
     average = round(sum(avg)/len(avg),1) if avg!=[] else 0
-    users = User.query.all()
+    users = [x for x in User.query.all() if current.address==x.address]
     details=[]
     for x in users:
         details.append([x.username,(x.level-1)*100+x.totalpoints])
@@ -259,7 +271,7 @@ def about():
 def tasks():
     posts = BlogPost.query.all()
     current = User.query.filter_by(username=session.get('username', None)).first()
-    return render_template("blog.html", all_posts=posts[::-1], now=current.username)
+    return render_template("blog.html", all_posts=posts[::-1], now=current.username,now2=current.address)
 
 
 @app.route("/myposts")
@@ -294,6 +306,7 @@ def new_post():
             body=form.body.data,
             author=current.username,
             date=date.today().strftime("%B %d, %Y"),
+            address=current.address,
             response = 0,
             archived = 0,
             people = '',

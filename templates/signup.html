@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>SocioPact - SignUp</title>
     <meta charset="UTF-8">
@@ -19,6 +20,7 @@
 
 
 </head>
+
 <body style="background-color: rgba(0,0,0,.95);">
     <div>
         <!-- Modal Content -->
@@ -26,7 +28,7 @@
             <!-- Modal Header -->
             <div class="modal-header">
                 <h3 class="header-title"><em>Sign Up To SocioPact</em></h3>
-                
+
             </div>
             <!-- Modal Body -->
             <div class="modal-body">
@@ -37,18 +39,13 @@
                                 <fieldset>
                                     <input name="email" type="email" class="form-control" id="email"
                                         placeholder="Your Email" required="">
-                                </fieldset>
-                            </div>
-                            <div class="col-md-12">
-                                <fieldset>
-                                    <input name="address" type="text" class="form-control" id="address"
-                                        placeholder="Your Address" required="">
+
                                 </fieldset>
                             </div>
                             <div class="col-md-12">
                                 <fieldset>
                                     <input name="username" class="form-control" id="username" type="text"
-                                        placeholder="Create Username" required="">
+                                        placeholder="First Name" required="">
                                 </fieldset>
                             </div>
                             <div class="col-md-12">
@@ -57,7 +54,24 @@
                                         placeholder="Create Password" required="">
                                 </fieldset>
                             </div>
-                            
+                            <div class="col-md-12">
+                                <fieldset>
+                                    <label for="neighborhoods" style="color:rgb(240, 232, 232);font-weight:200">Select your neighborhood:&nbsp;&nbsp;&nbsp;</label>
+                                    <select style="padding:10px 20px;border-radius:20px" id="neighborhoods" name="neighborhoods">
+                                        <option style="background-color:beige" value="Neighborhood name">Neighborhood name</option>
+                                        <option value="Aradhya Homes">Aradhya Homes</option>
+                                        <option value="Devinder Vihar">Devinder Vihar</option>
+                                        <option value="Signature Global">Signature Global</option>
+                                        <option value="Smartworld">Smartworld</option>
+                                        <option value="Unitech Fresco">Unitech Fresco</option>
+                                        <option value="Unitech Escape">Unitech Escape</option>
+                        
+                                    </select>
+                                </fieldset>
+                                <br>
+                                <br>
+                            </div>
+
                             <div class="col-md-12">
                                 <fieldset>
                                     <button type="submit" id="form-submit" class="btn">Sign Up</button>
@@ -70,4 +84,5 @@
         </div>
     </div>
 </body>
+
 </html>
