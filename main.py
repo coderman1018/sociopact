@@ -94,11 +94,16 @@ def login():
         userpass = request.form["password"]
         myuser = User.query.filter_by(email=selected).first()
 
-        if myuser and myuser.password==userpass:
+        if not myuser or myuser.password!=userpass:
+            win32api.MessageBox(0, 'Incorrect username or password', 'Error',4096)
+            
+        else:
+
             session['username'] = myuser.username
             session['level'] = myuser.level
             session['totalpoints'] = myuser.totalpoints
             session['helped'] = myuser.helped
+            
 
             return redirect(url_for("index"))
     return render_template("login.html")
