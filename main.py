@@ -278,7 +278,16 @@ def tasks():
     current = User.query.filter_by(username=session.get('username', None)).first()
     return render_template("blog.html", all_posts=posts[::-1], now=current.username,now2=current.address)
 
-
+@app.route("/selection/<author>")
+def selection(author):
+    current = User.query.filter_by(username=session.get('username', None)).first()
+    posts = BlogPost.query.all()
+    selected = []
+    for x in posts:
+        if x.author==author and x.archived==0:
+            selected.append(x)
+    return render_template("selection.html", author=author,selected=selected[::-1],now=current.username)
+    
 @app.route("/myposts")
 def myposts():
     current = User.query.filter_by(username=session.get('username', None)).first()
