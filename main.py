@@ -6,7 +6,10 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired, URL
 from flask_ckeditor import CKEditor, CKEditorField
 from datetime import date
+import datetime
 import win32api
+
+
 
 app = Flask(__name__)
 app.secret_key = "sociopact-123"
@@ -16,6 +19,8 @@ Bootstrap(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///sociopact.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+today = datetime.datetime.today().weekday()
 
 class CreatePostForm(FlaskForm):
     title = StringField("Task Title:", validators=[DataRequired()])
@@ -258,6 +263,10 @@ def about():
         leaderboard=False
     if len(details)>=3:
         one,two,three = details[0],details[1],details[2]
+    if today==6 and one[1]!=0 and one[0]==current.username:
+        winner = True
+    else:
+        winner = False
     return render_template("about.html",
                            user=current.username,
                            level=current.level,
@@ -267,8 +276,8 @@ def about():
                            one=one,
                            two=two,
                            three=three,
-                           leaderboard=leaderboard
-
+                           leaderboard=leaderboard,
+                           winner=winner
                            )
 
 
