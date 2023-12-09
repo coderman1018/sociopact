@@ -7,7 +7,8 @@ from wtforms.validators import DataRequired, URL
 from flask_ckeditor import CKEditor, CKEditorField
 from datetime import date
 import datetime
-import win32api
+import ctypes
+
 
 
 
@@ -89,7 +90,9 @@ def signup():
 
             return redirect(url_for('login'))
         else:
-            win32api.MessageBox(0, 'You have already signed up with this email. Try logging in instead', 'Duplicate Email',4096)
+            MessageBox = ctypes.windll.user32.MessageBoxW
+            MessageBox(None, 'You have already signed up with this email. Try logging in instead', 'Duplicate Email', "0x10000")
+            # win32api.MessageBox(0, 'You have already signed up with this email. Try logging in instead', 'Duplicate Email',4096)
     return render_template("signup.html")
 
 @app.route('/login', methods=["GET", "POST"])
@@ -100,7 +103,9 @@ def login():
         myuser = User.query.filter_by(email=selected).first()
 
         if not myuser or myuser.password!=userpass:
-            win32api.MessageBox(0, 'Incorrect username or password', 'Error',4096)
+            MessageBox = ctypes.windll.user32.MessageBoxW
+            MessageBox(None, 'Incorrect username or password', 'Error', "0x10000")
+            # win32api.MessageBox(0, 'Incorrect username or password', 'Error',4096)
             
         else:
 
