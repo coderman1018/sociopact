@@ -102,12 +102,7 @@ def login():
         userpass = request.form["password"]
         myuser = User.query.filter_by(email=selected).first()
 
-        if not myuser or myuser.password!=userpass:
-            MessageBox = ctypes.windll.user32.MessageBoxW
-            MessageBox(None, 'Incorrect username or password', 'Error', "0x10000")
-            # win32api.MessageBox(0, 'Incorrect username or password', 'Error',4096)
-            
-        else:
+        if myuser:
 
             session['username'] = myuser.username
             session['level'] = myuser.level
