@@ -363,5 +363,5 @@ def onepost(post_id,ishome):
     return render_template("onepost.html",post=post,ishome=ishome)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=81)
 
